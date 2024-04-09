@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>10</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Reference Include="0Harmony">
+        <HintPath>F:\Gameservers\gameserver\RustDedicated_Data\Managed\0Harmony.dll</HintPath>
+      </Reference>
+      <Reference Include="Assembly-CSharp">
+        <HintPath>F:\Gameservers\gameserver\RustDedicated_Data\Managed\Assembly-CSharp.dll</HintPath>
+      </Reference>
+      <Reference Include="Assembly-CSharp-firstpass">
+        <HintPath>F:\Gameservers\gameserver\RustDedicated_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      </Reference>
+      <Reference Include="Facepunch.Console">
+        <HintPath>F:\Gameservers\gameserver\RustDedicated_Data\Managed\Facepunch.Console.dll</HintPath>
+      </Reference>
+      <Reference Include="Facepunch.Network">
+        <HintPath>F:\Gameservers\gameserver\RustDedicated_Data\Managed\Facepunch.Network.dll</HintPath>
+      </Reference>
+      <Reference Include="Facepunch.Sqlite">
+        <HintPath>F:\Gameservers\gameserver\RustDedicated_Data\Managed\Facepunch.Sqlite.dll</HintPath>
+      </Reference>
+      <Reference Include="Facepunch.System">
+        <HintPath>F:\Gameservers\gameserver\RustDedicated_Data\Managed\Facepunch.System.dll</HintPath>
+      </Reference>
+      <Reference Include="Facepunch.Unity">
+        <HintPath>F:\Gameservers\gameserver\RustDedicated_Data\Managed\Facepunch.Unity.dll</HintPath>
+      </Reference>
+      <Reference Include="Facepunch.UnityEngine">
+        <HintPath>F:\Gameservers\gameserver\RustDedicated_Data\Managed\Facepunch.UnityEngine.dll</HintPath>
+      </Reference>
+      <Reference Include="Newtonsoft.Json">
+        <HintPath>F:\Gameservers\gameserver\RustDedicated_Data\Managed\Newtonsoft.Json.dll</HintPath>
+      </Reference>
+      <Reference Include="Rust.Harmony">
+        <HintPath>F:\Gameservers\gameserver\RustDedicated_Data\Managed\Rust.Harmony.dll</HintPath>
+      </Reference>
+      <Reference Include="System.Threading.Channels">
+        <HintPath>F:\Gameservers\gameserver\RustDedicated_Data\Managed\System.Threading.Channels.dll</HintPath>
+      </Reference>
+      <Reference Include="UnityEngine.CoreModule">
+        <HintPath>F:\Gameservers\gameserver\RustDedicated_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>
