@@ -6,10 +6,6 @@ using ToxVoice.ToxVoiceConfiguration;
 
 namespace ToxVoice.TranscriptionProcessing;
 
-public interface ITranscriptionLogSink
-{
-	void TryWrite(Transcription.Transcription transcription);
-}
 
 public class TranscriptionLogSink : IDisposable
 {

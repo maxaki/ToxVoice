@@ -39,6 +39,9 @@ public class VoiceNetworking : IDisposable
 			ClientWebSocket = await ConnectWebSocket().ConfigureAwait(false)!;
 			while (ClientWebSocket is null)
 			{
+				if (_shutDownToken.IsCancellationRequested)
+					return;
+
 				ClientWebSocket = await ConnectWebSocket().ConfigureAwait(false)!;
 			}
 
