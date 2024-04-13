@@ -3,6 +3,7 @@ using System.Threading.Channels;
 using ToxVoice.Extensions;
 using ToxVoice.Persistence;
 using ToxVoice.ToxVoiceConfiguration;
+using ToxVoice.Transcriptions;
 
 namespace ToxVoice.TranscriptionProcessing;
 
@@ -16,7 +17,7 @@ public class TranscriptionLogSink : IDisposable
 	private readonly ViolationWeightThreshold _violationWeightThreshold;
 	private readonly int _discordAlertThreshold;
 	private readonly bool _consoleLogsEnabled;
-	private readonly Channel<Transcription.Transcription> _transcriptionSink = Channel.CreateUnbounded<Transcription.Transcription>();
+	private readonly Channel<Transcription> _transcriptionSink = Channel.CreateUnbounded<Transcription>();
 
 	public TranscriptionLogSink(ConfigurationFile configuration, CancellationToken abortToken)
 	{
@@ -39,7 +40,7 @@ public class TranscriptionLogSink : IDisposable
 		_ = TranscriptionSinkTask(abortToken);
 	}
 
-	public void TryWrite(Transcription.Transcription transcription) => _transcriptionSink.Writer.TryWrite(transcription);
+	public void TryWrite(Transcription transcription) => _transcriptionSink.Writer.TryWrite(transcription);
 
 	private async Task TranscriptionSinkTask(CancellationToken cancellationToken)
 	{
@@ -61,17 +62,22 @@ public class TranscriptionLogSink : IDisposable
 						violatedFilterWeight = _transcriptionFilter.GetViolatedFilterWeight(transcription.Text);
 					}
 
-					string? violationAction = null;
+					ViolationAction? violationAction = null;
 					if (_violationWeightThreshold.Enabled)
 					{
 						if (_violationWeightThreshold.TriggerActionWeightThreshold <= violatedFilterWeight)
 						{
 							var violations = ToxVoicePersistence.IncrementViolationCount(steamId);
-							violationAction = _violationWeightThreshold.GetViolationAction(violations);
+							var cachedCooldown = ToxVoiceViolationCooldownCache.IsPlayerOnCooldown(steamId);
+							if (!cachedCooldown)
+							{
+								violationAction = _violationWeightThreshold.GetViolationAction(violations);
+								ToxVoiceViolationCooldownCache.SetPlayerCooldown(steamId, violationAction.CooldownSeconds);
+							}
 						}
 					}
 
-					transcription.ConsoleCommand(violationAction, steamId, _consoleLogsEnabled);
+					transcription.ConsoleCommand(violationAction?.Action, steamId, _consoleLogsEnabled);
 					if (_discordAlertThreshold <= violatedFilterWeight && _discordAlertLogsHttpClient is not null)
 					{
 						var response = await _discordAlertLogsHttpClient.SendMessageWithRetryAsync(steamId, transcription, violatedFilterWeight, cancellationToken).ConfigureAwait(false);

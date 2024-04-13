@@ -2,7 +2,7 @@
 using System.Text;
 using ToxVoice.TranscriptionProcessing;
 
-namespace ToxVoice.Transcription;
+namespace ToxVoice.Transcriptions;
 
 public class Transcription
 {

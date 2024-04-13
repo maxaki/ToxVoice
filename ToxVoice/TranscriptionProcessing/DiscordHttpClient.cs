@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
+using ToxVoice.Transcriptions;
 
 namespace ToxVoice.TranscriptionProcessing;
 
@@ -16,7 +17,7 @@ public class DiscordHttpClient : IDisposable
 		_httpClient.BaseAddress = webhookUri;
 	}
 
-	private MultipartFormDataContent CreateMultipartContent(string steamId, Transcription.Transcription transcription, int violatedFilterWeight)
+	private MultipartFormDataContent CreateMultipartContent(string steamId, Transcription transcription, int violatedFilterWeight)
 	{
 		var content = new MultipartFormDataContent();
 		var fileContent = new ByteArrayContent(transcription.Data, 0, transcription.DataLength);
@@ -44,7 +45,7 @@ public class DiscordHttpClient : IDisposable
 		return content;
 	}
 
-	public async Task<HttpResponseMessage> SendMessageWithRetryAsync(string steamId, Transcription.Transcription transcription, int violatedFilterWeight, CancellationToken cancellationToken)
+	public async Task<HttpResponseMessage> SendMessageWithRetryAsync(string steamId, Transcription transcription, int violatedFilterWeight, CancellationToken cancellationToken)
 	{
 		const int maxRetries = 3;
 		const int retryDelay = 1000;

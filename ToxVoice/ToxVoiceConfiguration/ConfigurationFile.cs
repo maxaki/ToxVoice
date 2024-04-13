@@ -64,22 +64,44 @@ public class ViolationWeightThreshold
 	public bool Enabled { get; set; } = true;
 	public int TriggerActionWeightThreshold { get; set; } = 10;
 	[JsonProperty(PropertyName = "ViolationActions", ObjectCreationHandling = ObjectCreationHandling.Replace)]
-	public Dictionary<int, string> ViolationActions { get; set; } = new()
+	public Dictionary<int, ViolationAction> ViolationActions { get; set; } = new()
 	{
-		{1, "mute {steamid} 1s"},
-		{2, "mute {steamid} 1m"},
-		{3, "mute {steamid} 1h"},
-		{4, @"kick {steamid} ""Too many violations"""}
+		{1, new ViolationAction("warn {steamid} \"First warning for violating the rules\"", 30)},
+		{2, new ViolationAction("warn {steamid} \"Second warning for violating the rules\"", 30)},
+		{3, new ViolationAction("mute {steamid} 30s \"Muted for repeated rule violations\"", 30)},
+		{4, new ViolationAction("mute {steamid} 1m \"Muted for continued rule violations\"", 60)},
+		{5, new ViolationAction("mute {steamid} 5m \"Muted for persistent rule violations\"", 300)},
+		{6, new ViolationAction("mute {steamid} 1h \"Muted for ongoing rule violations\"", 3600)},
+		{7, new ViolationAction("mute {steamid} 3h \"Muted for frequent rule violations\"", 10800)},
+		{8, new ViolationAction("mute {steamid} 12h \"Muted for excessive rule violations\"", 43200)},
+		{9, new ViolationAction("mute {steamid} 1d \"Muted for numerous rule violations\"", 86400)},
+		{10, new ViolationAction("ban {steamid} 1d \"Banned for repeated and severe rule violations\"", 86400)}
 	};
 
-	public string GetViolationAction(int violationCount)
+
+
+	public ViolationAction GetViolationAction(int violationCount)
 	{
-		if (ViolationActions.TryGetValue(violationCount, out var action))
+		if (ViolationActions.TryGetValue(violationCount, out var violationAction))
 		{
-			return action;
+			return violationAction;
 		}
 
 		return ViolationActions[ViolationActions.Keys.Max()];
+	}
+}
+public class ViolationAction
+{
+	[JsonProperty("Action")]
+	public string Action { get; set; }
+
+	[JsonProperty("CooldownSeconds")]
+	public int CooldownSeconds { get; set; }
+
+	public ViolationAction(string action, int cooldownSeconds)
+	{
+		Action = action;
+		CooldownSeconds = cooldownSeconds;
 	}
 }
 

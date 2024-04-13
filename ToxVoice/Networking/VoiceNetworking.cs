@@ -1,8 +1,8 @@
 ﻿using System.Net.WebSockets;
 using System.Threading.Channels;
 using ToxVoice.ToxVoiceConfiguration;
-using ToxVoice.Transcription;
 using ToxVoice.TranscriptionProcessing;
+using ToxVoice.Transcriptions;
 using ToxVoice.Voice;
 
 namespace ToxVoice.Networking;
@@ -76,9 +76,6 @@ public class VoiceNetworking : IDisposable
 
 	private async Task<ClientWebSocket?> ConnectWebSocket()
 	{
-		if (_shutDownToken.IsCancellationRequested)
-			return default;
-
 		var token = _config.ToxVoice.Token;
 		while (!_shutDownToken.IsCancellationRequested)
 		{

@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+﻿using ToxVoice.Transcriptions;
+using UnityEngine;
 
 namespace ToxVoice.Extensions;
 
 public static class ConsoleExtensions
 {
 
-	public static void ConsoleCommand(this Transcription.Transcription transcription, string? command, string steamId, bool printConsole)
+	public static void ConsoleCommand(this Transcription transcription, string? command, string steamId, bool printConsole)
 	{
 		var text = transcription.Text;
 
