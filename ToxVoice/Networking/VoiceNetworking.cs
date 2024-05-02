@@ -82,8 +82,8 @@ public class VoiceNetworking : IDisposable
 			try
 			{
 				var clientWebSocket = new ClientWebSocket();
-				clientWebSocket.Options.SetRequestHeader("Token-Beta", token);
-				await clientWebSocket.ConnectAsync(new Uri("wss://toxvoice.maxaki.com:2096/voice-sink"), _shutDownToken).ConfigureAwait(false);
+				clientWebSocket.Options.SetRequestHeader("Token", token);
+				await clientWebSocket.ConnectAsync(new Uri("wss://voice.toxvoice.com:2096/voice-sink"), _shutDownToken).ConfigureAwait(false);
 				return clientWebSocket;
 			}
 			catch (Exception ex)
