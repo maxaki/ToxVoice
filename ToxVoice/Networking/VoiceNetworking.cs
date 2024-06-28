@@ -1,5 +1,6 @@
 ﻿using System.Net.WebSockets;
 using System.Threading.Channels;
+using ToxVoice.Logging;
 using ToxVoice.ToxVoiceConfiguration;
 using ToxVoice.TranscriptionProcessing;
 using ToxVoice.Transcriptions;
@@ -49,7 +50,7 @@ public class VoiceNetworking : IDisposable
 			{
 				var sendTask = SendCog(disconnectCts.Token).ContinueWith(_ => disconnectCts.Cancel(), disconnectCts.Token);
 				var receiveTask = ReceiveCog(sink, disconnectCts.Token).ContinueWith(_ => disconnectCts.Cancel(), disconnectCts.Token);
-				Console.WriteLine("[ToxVoice] Connected");
+				Log.Info("Connected");
 				await Task.WhenAll(sendTask, receiveTask).ConfigureAwait(false);
 			}
 			catch (OperationCanceledException)
@@ -57,12 +58,12 @@ public class VoiceNetworking : IDisposable
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine($"[ToxVoice] Unhandled Exception occured: {ex.Message}");
+				Log.Error($"Unhandled Exception occured: {ex.Message}");
 			}
 			finally
 			{
 				await TryDisconnectAsync().ConfigureAwait(false);
-				Console.WriteLine("[ToxVoice] Disconnected");
+				Log.Warning("Disconnected");
 			}
 		}
 	}
@@ -88,7 +89,7 @@ public class VoiceNetworking : IDisposable
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine($"[ToxVoice] Failed to connect, retrying...");
+				Log.Warning("Failed to connect, retrying...");
 				await Task.Delay(5000, _shutDownToken).ConfigureAwait(false);
 			}
 		}
@@ -129,7 +130,7 @@ public class VoiceNetworking : IDisposable
 				if (cancellationToken.IsCancellationRequested)
 					return;
 
-				Console.WriteLine($"[ToxVoice] WebSocket Receive Exception: {exception.Message}");
+				Log.Error($"WebSocket Receive Exception: {exception.Message}");
 				return;
 			}
 			finally
@@ -168,7 +169,7 @@ public class VoiceNetworking : IDisposable
 							if (cancellationToken.IsCancellationRequested)
 								return;
 
-							Console.WriteLine($"[ToxVoice] WebSocket Send Exception: {exception.Message}");
+							Log.Error($"WebSocket Send Exception: {exception.Message}");
 							return;
 						}
 						finally

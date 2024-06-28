@@ -1,6 +1,7 @@
 ﻿using System.Buffers;
 using System.Threading.Channels;
 using ToxVoice.Extensions;
+using ToxVoice.Logging;
 using ToxVoice.Persistence;
 using ToxVoice.ToxVoiceConfiguration;
 using ToxVoice.Transcriptions;
@@ -87,7 +88,7 @@ public class TranscriptionLogSink : IDisposable
 						}
 						else
 						{
-							Console.WriteLine($"[ToxVoice] Failed to upload discord file. Status code: {response.StatusCode}");
+							Log.Warning($"Failed to upload discord file. Status code: {response.StatusCode}");
 						}
 					}
 
@@ -96,13 +97,13 @@ public class TranscriptionLogSink : IDisposable
 						var response = await _defaultDiscordClient.SendMessageWithRetryAsync(steamId, transcription, violatedFilterWeight, cancellationToken).ConfigureAwait(false);
 						if (!response.IsSuccessStatusCode)
 						{
-							Console.WriteLine($"[ToxVoice] Failed to upload discord file to default webhook. Status code: {response.StatusCode}");
+							Log.Warning($"Failed to upload discord file to default webhook. Status code: {response.StatusCode}");
 						}
 					}
 				}
 				catch (Exception exception)
 				{
-					Console.WriteLine($"[ToxVoice] Unexpected transcription log exception: {exception.Message}");
+					Log.Error($"Unexpected transcription log exception: {exception.Message}");
 				}
 				finally
 				{

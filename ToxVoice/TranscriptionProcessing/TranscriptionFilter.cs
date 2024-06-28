@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using ToxVoice.Logging;
 using ToxVoice.ToxVoiceConfiguration;
 
 namespace ToxVoice.TranscriptionProcessing;
@@ -6,15 +7,13 @@ namespace ToxVoice.TranscriptionProcessing;
 public class TranscriptionFilter
 {
 	public readonly List<TriggerFilter> Filters;
+
 	public TranscriptionFilter(ConfigurationFile configurationFile)
 	{
 		Filters = configurationFile.TriggerFilter.Filters;
 	}
 
-	public int GetViolatedFilterWeight(string text)
-	{
-		return GetViolatedFilterWeightCore(text, Filters);
-	}
+	public int GetViolatedFilterWeight(string text) => GetViolatedFilterWeightCore(text, Filters);
 
 	private static int GetViolatedFilterWeightCore(string text, List<TriggerFilter> filters)
 	{
@@ -42,11 +41,19 @@ public class TranscriptionFilter
 	{
 		foreach (var pattern in regexPatterns)
 		{
-			if (!Regex.IsMatch(text, pattern, RegexOptions.IgnoreCase))
+			try
 			{
-				return false;
+				if (!Regex.IsMatch(text, pattern, RegexOptions.IgnoreCase))
+				{
+					return false;
+				}
+			}
+			catch(Exception exception)
+			{
+				Log.Error("Error in regex pattern: " + pattern);
 			}
 		}
+
 		return true;
 	}
 
@@ -59,6 +66,7 @@ public class TranscriptionFilter
 				return false;
 			}
 		}
+
 		return true;
 	}
 
@@ -75,6 +83,7 @@ public class TranscriptionFilter
 				return true;
 			}
 		}
+
 		return false;
 	}
 }

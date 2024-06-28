@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Threading.Channels;
+using ToxVoice.Logging;
 using ToxVoice.Voice;
 
 namespace ToxVoice.Networking;
@@ -48,7 +49,7 @@ public class PlayerVoiceSink : IDisposable
 		}
 		catch (Exception e)
 		{
-			Console.WriteLine($"[ToxVoice] Unexpected exception in voice sink: {e.Message}");
+			Log.Error($"Unexpected exception in voice sink: {e.Message}");
 		}
 	}
 

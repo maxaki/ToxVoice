@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
+using ToxVoice.Logging;
 using ToxVoice.Transcriptions;
 
 namespace ToxVoice.TranscriptionProcessing;
@@ -52,6 +53,9 @@ public class DiscordHttpClient : IDisposable
 		using var content = CreateMultipartContent(steamId, transcription, violatedFilterWeight);
 		for (var retry = 0; retry < maxRetries; retry++)
 		{
+			if (cancellationToken.IsCancellationRequested)
+				return new HttpResponseMessage(HttpStatusCode.InternalServerError);
+
 			try
 			{
 				var response = await _httpClient.PostAsync("", content, cancellationToken).ConfigureAwait(false);
@@ -61,7 +65,7 @@ public class DiscordHttpClient : IDisposable
 				if (IsRateLimited(response))
 				{
 					var resetAfter = GetRateLimitResetAfter(response);
-					Console.WriteLine($"[ToxVoice] Discord Rate limited. Retrying after {resetAfter.TotalSeconds} seconds.");
+					Log.Warning($"Discord Rate limited. Retrying after {resetAfter.TotalSeconds} seconds.");
 					await Task.Delay(resetAfter, cancellationToken).ConfigureAwait(false);
 					continue;
 				}
@@ -69,8 +73,7 @@ public class DiscordHttpClient : IDisposable
 			catch
 			{
 			}
-
-			Console.WriteLine($"[ToxVoice] Failed to upload discord file. Retry attempt: {retry + 1}");
+			Log.Warning($"Failed to upload discord file. Retry attempt: {retry + 1}");
 			await Task.Delay(retryDelay, cancellationToken).ConfigureAwait(false);
 		}
 
